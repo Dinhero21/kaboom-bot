@@ -2,6 +2,8 @@ const fs = require('fs')
 const minecraft = require('minecraft-protocol')
 const { EventEmitter } = require('events')
 
+const plugins = fs.readdirSync('plugins').filter(filename => filename.endsWith('.js')).map(filename => require(`./plugins/${filename}`))
+
 function createBot (options = {}) {
   options.username = options.username ?? 'Player'
   options.password = options.password ?? false
@@ -115,14 +117,8 @@ function createBot (options = {}) {
   }
 }
 function loadPlugins (bot) {
-  fs.readdirSync('plugins').filter(filename => filename.endsWith('.js')).forEach(filename => {
-    try {
-      const injector = require(`./plugins/${filename}`, 'utf8')
-
-      injector.inject(bot)
-    } catch (error) {
-      console.log(`[${filename}] Error: ${error}`)
-    }
+  plugins.forEach(plugin => {
+    plugin.inject(bot)
   })
 }
 
