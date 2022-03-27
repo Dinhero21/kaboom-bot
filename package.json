@@ -1,0 +1,44 @@
+{
+  "name": "kaboom-bot",
+  "version": "1.0.0",
+  "description": "A Kaboom Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "kaboom",
+    "bot",
+    "minecraft"
+  ],
+  "author": "dinhero21",
+  "license": "ISC",
+  "dependencies": {
+    "@tonejs/midi": "^2.0.28",
+    "color-convert": "^2.0.1",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "inspirational-quotes": "^2.0.1",
+    "insult": "^0.0.3",
+    "lodash": "^4.17.21",
+    "log4js": "^6.4.3",
+    "markov": "^0.0.7",
+    "mathjs": "^10.1.1",
+    "minecraft-data": "^2.113.3",
+    "minecraft-protocol": "^1.30.0",
+    "nearest-color": "^0.4.4",
+    "node-fetch": "^3.2.0",
+    "prismarine-nbt": "^2.2.0",
+    "standard": "^16.0.4",
+    "stuffs": "^0.1.12",
+    "vec2": "^1.6.1",
+    "vec3": "^0.1.7"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0"
+  }
+}
