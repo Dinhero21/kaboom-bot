@@ -2,6 +2,8 @@ const math = require('mathjs')
 
 class Calc extends Command {
   run (args, username) {
+    super.run(args, username)
+
     const expression = args.join(' ')
 
     try {

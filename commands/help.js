@@ -3,6 +3,8 @@ const path = require('path')
 
 class Help extends Command {
   run (args, username) {
+    super.run(args, username)
+
     const handler = this.handler
     const command = args.join(' ')
 

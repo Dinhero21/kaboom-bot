@@ -1,5 +1,7 @@
 class Ban extends Command {
   run (args, username) {
+    super.run(args, username)
+
     const [method, player] = args
 
     if (!this.handler.bot.util.getPlayer(player)) this.handler.error(`Unknown player ${player}.`)

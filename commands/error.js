@@ -1,5 +1,7 @@
 class Error extends Command {
   run (args, username) {
+    super.run(args, username)
+
     const error = args.join(' ')
 
     this.handler.error(error)

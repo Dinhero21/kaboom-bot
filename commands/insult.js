@@ -1,14 +1,17 @@
-const { Insult } = require('insult')
+const insult = require('insult')
+
+class Insult extends Command {
+  run (args, username) {
+    super.run(args, username)
+
+    this.handler.tellraw({
+      text: insult.Insult()
+    })
+  }
+}
 
 module.exports = {
-  execute: Handler => {
-    const insult = Insult()
-
-    Handler.tellraw({
-      text: insult,
-      color: Handler.colors.insult
-    })
-  },
+  Command: Insult,
   name: 'insult',
   description: 'Reverse of inspire.',
   usage: 'insult',

@@ -1,5 +1,7 @@
 class Deb extends Command {
   run (args, username) {
+    super.run(args, username)
+
     let block = args.join(' ')
 
     if (!block) return this.handler.error(this.handler.errors.INVALID_INPUT)
