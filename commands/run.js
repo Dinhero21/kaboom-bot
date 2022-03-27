@@ -1,5 +1,3 @@
-/* global Command */
-
 class Run extends Command {
   run (args, username) {
     const command = args.join(' ')

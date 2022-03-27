@@ -1,10 +1,13 @@
-module.exports = {
-  execute: Handler => {
-    const error = Handler.args.join(' ')
+class Error extends Command {
+  run (args, username) {
+    const error = args.join(' ')
 
-    if (!error) Handler.error('Invalid error.')
-    else Handler.error(error)
-  },
+    this.handler.error(error)
+  }
+}
+
+module.exports = {
+  Command: Error,
   name: 'error',
   description: 'Will error an provided error.',
   usage: 'error <error>',

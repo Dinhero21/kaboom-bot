@@ -1,16 +1,20 @@
 const { hsl } = require('color-convert')
 
-module.exports = {
-  execute: Handler => {
-    const text = Handler.args.join(' ')
+class Rainbowify extends Command {
+  run (args, username) {
+    const text = args.join(' ')
 
-    Handler.tellraw([...text].map((character, index) => {
+    this.handler.tellraw(text.split('').map((character, index) => {
       return {
         text: character,
         color: `#${hsl.hex(index / text.length * 360, 100, 50)}`
       }
     }))
-  },
+  }
+}
+
+module.exports = {
+  Command: Rainbowify,
   name: 'rainbowify',
   description: 'Rainbowifies an text.',
   usage: 'rainbowify <text>',

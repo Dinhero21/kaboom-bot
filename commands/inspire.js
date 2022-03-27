@@ -1,23 +1,27 @@
-const { getQuote } = require('inspirational-quotes')
+const quotes = require('inspirational-quotes')
 
-module.exports = {
-  execute: Handler => {
-    const quote = getQuote()
+class Inspire extends Command {
+  run (args, username) {
+    const quote = quotes.getQuote()
 
-    Handler.tellraw([
+    this.handler.tellraw([
       {
         text: quote.text,
-        color: Handler.colors.quote.text
+        color: this.handler.colors.quote.text
       },
       ' - ',
       '"',
       {
         text: quote.author,
-        color: Handler.colors.quote.author
+        color: this.handler.colors.quote.author
       },
       '"'
     ])
-  },
+  }
+}
+
+module.exports = {
+  Command: Inspire,
   name: 'inspire',
   description: 'Inspires you.',
   usage: 'inspire',
