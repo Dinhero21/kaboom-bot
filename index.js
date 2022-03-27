@@ -1,6 +1,6 @@
 const config = require('./config.json')
 const log4js = require('log4js')
-const {createBot} = require('./bot.js')
+const { createBot } = require('./bot.js')
 
 require('dotenv').config()
 
@@ -20,90 +20,77 @@ log4js.configure({
 })
 
 const logger = log4js.getLogger('chat')
-const bot = createBot(config.bot)
-bot.cspy = false
-bot.vanish = false
 
-bot.on('login', login)
-bot.on('message', handleMessage)
-bot.on('tick', tick)
-bot.on('end', end)
-bot.on('position', fillCore)
-bot.on('error', console.error)
-bot.on('parsed_chat', handleParsedChat)
+config.servers.forEach(server => {
+  // TODO: Make a handleBot file to handle the bots
 
-function login() {
-  console.log('Bot logged in!')
+  function handleBot () {
+    const bot = createBot({
+      username: config.bot.username,
+      password: config.bot.password,
+      version: config.bot.version,
+      host: server.host,
+      port: server.port
+    })
 
-  bot.createCore(config.core.size)
+    // TODO: Make these libs
+    bot.cspy = false
+    bot.vanish = false
 
-  setInterval(fillCore, 1000 * 60)
+    bot.on('login', () => {
+      bot.createCore(config.core.size)
+    })
 
-  setInterval(() => {
-    if(!bot.cspy) bot.chat('/c on')
-    if(!bot.vanish) bot.chat('/v on')
-  }, 1000)
+    bot.on('position', () => {
+      bot.core.fillCore()
+    })
 
-  setInterval(bot.ban.tick, 1000)
-  setInterval(bot.whitelist.tick, 1000)
-}
-function tick() {
-  if(bot.op) {
-    if(bot.gamemode !== null && bot.gamemode !== 1) bot.chat('/gmc')
-  } else bot.chat(`/op ${bot.uuid}`)
+    bot.on('parsed_chat', data => {
+      const filters = {
+        '^Successfully disabled CommandSpy$': data => {
+          bot.cspy = false
+        },
+        '^Successfully enabled CommandSpy$': data => {
+          bot.cspy = true
+        },
+        '^Vanish for .*: disabled$': data => {
+          bot.vanish = false
+        },
+        '^You are now completely invisible to normal users, and hidden from in-game commands.$': data => {
+          bot.vanish = true
+        }
+      }
 
-  bot.cloop.tick()
-}
-function end(end) {
-  console.log(`Disconnected: ${end}`)
+      for (const filter in filters) {
+        const regex = new RegExp(filter, 'gi')
 
-  process.exit(1)
-}
-function fillCore() {
-  console.log('Filling core!')
+        if (regex.test(data.clean)) filters[filter](data)
+      }
 
-  bot.core.fillCore()
-}
-function handleMessage(username, message) {
-  if(username === bot.username) return
+      console.log(`[0m${data.ansi}${String.fromCharCode(27)}`)
 
-  message = message.replaceAll(/§./g, '')
+      logger.debug(data.raw)
+    })
+    bot.on('message', (username, message) => {
+      if (username === bot.username) return
 
-  if(message.startsWith(config.prefix)) {
-    message = message.substring(config.prefix.length)
+      message = message.replaceAll(/§./g, '')
 
-    const args = message.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
+      if (message.startsWith(config.prefix)) {
+        message = message.substring(config.prefix.length)
 
-    if(!args) return bot.chat('Error: Invalid syntax.')
+        const args = message.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
 
-    bot.command.chat.run(args[0], args.slice(1), username)
-  }
-}
-function handleParsedChat(data) {
-  const filters = {
-    '^Successfully disabled CommandSpy$': data => {
-      bot.cspy = false
-    },
-    '^Successfully enabled CommandSpy$': data => {
-      bot.cspy = true
-    },
-    '^Vanish for .*: disabled$': data => {
-      bot.vanish = false
-    },
-    '^You are now completely invisible to normal users, and hidden from in-game commands.$': data => {
-      bot.vanish = true
-    }
+        if (!args) return bot.chat('Error: Invalid syntax.')
+
+        bot.command.chat.run(args[0], args.slice(1), username)
+      }
+    })
+
+    bot.on('end', reason => {
+      setTimeout(handleBot, 1000 * 10)
+    })
   }
 
-  for(const filter in filters) {
-    const regex = new RegExp(filter, 'gi')
-
-    if(regex.test(data.clean)) filters[filter](data)
-  }
-
-  const reset = '\033[0m'
-
-  console.log(`${reset}${data.ansi}`)
-
-  logger.debug(data.raw)
-}
+  handleBot()
+})
