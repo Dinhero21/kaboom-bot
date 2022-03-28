@@ -9,7 +9,7 @@ class Chat extends Command {
 }
 
 module.exports = {
-  execute: Chat,
+  Command: Chat,
   name: 'chat',
   description: 'Echos text back.',
   usage: 'chat <message>',
