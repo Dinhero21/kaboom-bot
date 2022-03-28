@@ -25,7 +25,7 @@ class Help extends Command {
               color: 'white' // TODO: Add in colors
             },
             {
-              text: JSON.stringify(value),
+              text: value,
               color: 'blue' // TODO: Add in colors
             }
           ])
@@ -34,7 +34,7 @@ class Help extends Command {
         handler.error(handler.config.errors.UNKNOWN_COMMAND)
       }
     } else {
-      const commands = fs.readdirSync('commands').map(command => `commands/${command}`).filter(command => fs.statSync(command).isFile())
+      const commands = fs.readdirSync('commands').map(command => `commands/${command}`).filter(filepath => fs.statSync(filepath).isFile()).filter(filepath => filepath.endsWith('.js'))
 
       for (const command of commands) {
         const basename = path.basename(command, '.js')
@@ -43,7 +43,7 @@ class Help extends Command {
 
         handler.tellraw({
           text: basename,
-          color: properties.enabled ? handler.colors.permission[properties.trust] : handler.colors.disabled,
+          color: properties.execute ? 'yellow' : properties.enabled ? handler.colors.permission[properties.trust] : handler.colors.disabled,
           clickEvent: {
             action: 'run_command',
             value: `${handler.config.prefix}help ${basename}`
