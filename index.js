@@ -1,36 +1,46 @@
 const config = require('./config.json')
 const log4js = require('log4js')
+const _ = require('lodash')
 const { createBot } = require('./bot.js')
 
 require('dotenv').config()
 
+const servers = process.env.SERVERS.split(',')
+
 log4js.configure({
-  appenders: {
-    chat: {
+  appenders: _.zipObject(servers, servers.map(server => {
+    return {
       type: 'file',
-      filename: `logs/${config.bot.host}.log`
+      filename: `logs/${server.split(':')[0]}.log`
     }
-  },
+  })),
   categories: {
+    ..._.zipObject(servers, servers.map(server => {
+      return {
+        appenders: [server],
+        level: 'all'
+      }
+    })),
     default: {
-      appenders: ['chat'],
+      appenders: servers,
       level: 'all'
     }
   }
 })
 
-const logger = log4js.getLogger('chat')
+process.env.SERVERS.split(',').forEach(server => {
+  const logger = log4js.getLogger(server)
+  let [host, port] = server.split(':')
 
-config.servers.forEach(server => {
-  // TODO: Make a handleBot file to handle the bots
+  port = port ?? 25565
 
   function handleBot () {
     const bot = createBot({
       username: config.bot.username,
       password: config.bot.password,
       version: config.bot.version,
-      host: server.host,
-      port: server.port
+      host: host,
+      port: port
     })
 
     // TODO: Make these libs
@@ -38,6 +48,8 @@ config.servers.forEach(server => {
     bot.vanish = false
 
     bot.on('login', () => {
+      logger.info('Logged in!')
+
       bot.createCore(config.core.size)
     })
 
@@ -69,8 +81,9 @@ config.servers.forEach(server => {
 
       console.log(`[${bot.host}] ${data.ansi}${String.fromCharCode(27)}[0m`)
 
-      logger.debug(data.raw)
+      logger.info(data.raw)
     })
+
     bot.on('message', (username, message) => {
       if (username === bot.username) return
 
@@ -88,7 +101,13 @@ config.servers.forEach(server => {
     })
 
     bot.on('end', reason => {
+      logger.error(`Disconnected: ${reason}`)
+
       setTimeout(handleBot, 1000 * 10)
+    })
+
+    bot.on('error', error => {
+      logger.error(error)
     })
   }
 
