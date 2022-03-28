@@ -1,8 +1,6 @@
 class Test extends Command {
   run (args, username) {
     super.run(args, username)
-
-    this.handler.bot._client.end()
   }
 }
 
