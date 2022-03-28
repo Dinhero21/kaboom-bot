@@ -100,7 +100,15 @@ process.env.SERVERS.split(',').forEach(server => {
       }
     })
 
+    bot.on('kick_disconnect', reason => {
+      console.log(`Kicked: ${reason}`)
+
+      logger.error(`Kicked: ${reason}`)
+    })
+
     bot.on('end', reason => {
+      console.log(`Disconnected: ${reason}`)
+
       logger.error(`Disconnected: ${reason}`)
 
       setTimeout(handleBot, 1000 * 10)
