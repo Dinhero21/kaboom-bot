@@ -67,7 +67,7 @@ config.servers.forEach(server => {
         if (regex.test(data.clean)) filters[filter](data)
       }
 
-      console.log(`[0m${data.ansi}${String.fromCharCode(27)}`)
+      console.log(`[${bot.host}] ${data.ansi}${String.fromCharCode(27)}[0m`)
 
       logger.debug(data.raw)
     })
