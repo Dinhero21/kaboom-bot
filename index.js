@@ -111,11 +111,19 @@ process.env.SERVERS.split(',').forEach(server => {
 
       logger.error(`Disconnected: ${reason}`)
 
-      setTimeout(handleBot, 1000 * 10)
+      setTimeout(handleBot, 1000 * process.env.RECONNECT_INTERVAL)
     })
 
     bot.on('error', error => {
       logger.error(error)
+    })
+
+    process.on('uncaughtException', error => {
+      console.log(error)
+
+      bot.util.error(`Fatal Error: ${error}`, '@a')
+
+      logger.fatal(error)
     })
   }
 
