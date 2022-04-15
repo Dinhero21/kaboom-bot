@@ -50,11 +50,9 @@ process.env.SERVERS.split(',').forEach(server => {
     bot.on('login', () => {
       logger.info('Logged in!')
 
-      bot.createCore(config.core.size)
-    })
+      log('Logged in!')
 
-    bot.on('position', () => {
-      bot.core.fillCore()
+      bot.createCore(config.core.size)
     })
 
     bot.on('parsed_chat', data => {
@@ -79,7 +77,7 @@ process.env.SERVERS.split(',').forEach(server => {
         if (regex.test(data.clean)) filters[filter](data)
       }
 
-      console.log(`[${bot.host}] ${data.ansi}${String.fromCharCode(27)}[0m`)
+      log(`${data.ansi}${String.fromCharCode(27)}[0m`)
 
       logger.info(data.raw)
     })
@@ -101,30 +99,52 @@ process.env.SERVERS.split(',').forEach(server => {
     })
 
     bot.on('kick_disconnect', reason => {
-      console.log(`Kicked: ${reason}`)
+      log(`Kicked: ${reason}`)
 
       logger.error(`Kicked: ${reason}`)
     })
 
     bot.on('end', reason => {
-      console.log(`Disconnected: ${reason}`)
+      log(`Disconnected: ${reason}`)
 
       logger.error(`Disconnected: ${reason}`)
 
-      setTimeout(handleBot, 1000 * process.env.RECONNECT_INTERVAL)
+      setTimeout(handleBot, process.env.RECONNECT_INTERVAL)
     })
 
     bot.on('error', error => {
+      log(error)
+
       logger.error(error)
     })
 
+    // TODO: Switch to another thing becouse setInterval can create memory leaks.
+    setInterval(() => {
+      if (!bot.op) {
+        chat('/op @p')
+        return
+      }
+
+      if (!bot.cspy) chat('/c on')
+      if (!bot.vanish) chat('/v on')
+
+      // Use custom function becouse bot.chat uses queue.
+      function chat (message) {
+        bot._client.write('chat', { message })
+      }
+    }, 1000 * 5)
+
     process.on('uncaughtException', error => {
-      console.log(error)
+      log(error)
 
       bot.util.error(`Fatal Error: ${error}`, '@a')
 
       logger.fatal(error)
     })
+
+    function log (message) {
+      console.log(`[${bot.host}] ${message}`)
+    }
   }
 
   handleBot()
