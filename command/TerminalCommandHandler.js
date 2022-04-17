@@ -9,10 +9,14 @@ class ChatCommandHandler extends CommandHandler {
   }
 
   log (message) {
+    console.info(message)
+
     this.logger.info(message)
   }
 
   error (message) {
+    console.error(message)
+
     this.logger.error(message)
   }
 }
