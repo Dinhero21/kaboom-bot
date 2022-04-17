@@ -113,7 +113,7 @@ function createBot (options = {}) {
     bot.emit('tick')
   }
   function generateRandomUsername (username, size) {
-    return `${username}${Array(size).fill(0).map(() => `§${String.fromCharCode(Math.floor(Math.random() * 65535))}`).join('')}`
+    return `${username}${Array(size).fill(0).map(() => 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]).join('')}`
   }
 }
 function loadPlugins (bot) {
