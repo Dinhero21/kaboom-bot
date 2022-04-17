@@ -17,7 +17,9 @@
   "dependencies": {
     "@tonejs/midi": "^2.0.28",
     "atomic-sleep": "^1.0.0",
+    "badwords": "^1.0.0",
     "color-convert": "^2.0.1",
+    "colors": "^1.4.0",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
     "inspirational-quotes": "^2.0.1",
