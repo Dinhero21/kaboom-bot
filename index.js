@@ -1,6 +1,7 @@
 const config = require('./config.json')
 const log4js = require('log4js')
 const _ = require('lodash')
+const { createInterface } = require('readline')
 const { createBot } = require('./bot.js')
 
 require('dotenv').config()
@@ -28,6 +29,25 @@ log4js.configure({
   }
 })
 
+const cli = createInterface({
+  input: process.stdin,
+  output: process.stdout
+})
+
+const log = global.console.log
+global.console.log = (...args) => {
+  // cli.pause()
+  cli.output.write('\x1b[2K\r')
+  log.apply(console, Array.prototype.slice.call(args))
+  // cli.resume()
+  cli._refreshLine()
+}
+
+setInterval(() => {
+  cli.output.write('\x1b[2K\r')
+  cli._refreshLine()
+}, 1000)
+
 process.env.SERVERS.split(',').forEach(server => {
   const logger = log4js.getLogger(server)
   let [host, port] = server.split(':')
@@ -43,6 +63,8 @@ process.env.SERVERS.split(',').forEach(server => {
       port: port
     })
 
+    bot.logger = logger
+
     // TODO: Make these libs
     bot.cspy = false
     bot.vanish = false
@@ -51,6 +73,86 @@ process.env.SERVERS.split(',').forEach(server => {
       logger.info('Logged in!')
 
       log('Logged in!')
+
+      cli.on('line', line => {
+        if (line.startsWith('/')) {
+          bot.chat(line)
+
+          return
+        }
+
+        if (line.startsWith(config.prefix)) {
+          line = line.substring(config.prefix.length)
+
+          const args = line.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
+
+          bot.command.terminal.run(args[0], args.slice(1))
+
+          return
+        }
+
+        if (line.startsWith('.')) {
+          line = line.substring('.'.length)
+
+          const args = line.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
+          const message = args.slice(1).join(' ')
+
+          switch (args[0]) {
+            case 'exit':
+              bot.end()
+
+              process.exit(0)
+            case 'sudo':
+              if (message === 'off') {
+                bot.sudo = false
+                break
+              }
+
+              bot.sudousername = message
+              bot.sudo = true
+
+              break
+            case 'core':
+              bot.core.run(message)
+              break
+            case 'chat':
+              bot.chat(message)
+          }
+
+          return
+        }
+
+        if (bot.sudo) {
+          bot.core.run(`sudo ${bot.sudousername} c:${line}`)
+
+          return
+        }
+
+        bot.util.tellraw([
+          {
+            text: '[',
+            color: config.colors.terminal.prefix.outline
+          },
+          {
+            text: 'Terminal',
+            color: config.colors.terminal.prefix.text
+          },
+          {
+            text: ']',
+            color: config.colors.terminal.prefix.outline
+          },
+          ' ',
+          {
+            text: 'Dinhero21',
+            color: config.colors.terminal.username
+          },
+          ': ',
+          {
+            text: line,
+            color: 'white'
+          }
+        ])
+      }, '@a')
 
       bot.createCore(config.core.size)
     })
@@ -134,6 +236,7 @@ process.env.SERVERS.split(',').forEach(server => {
       }
     }, 1000 * 5)
 
+    /*
     process.on('uncaughtException', error => {
       log(error)
 
@@ -141,6 +244,7 @@ process.env.SERVERS.split(',').forEach(server => {
 
       logger.fatal(error)
     })
+    */
 
     function log (message) {
       console.log(`[${bot.host}] ${message}`)
