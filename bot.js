@@ -25,6 +25,8 @@ function createBot (options = {}) {
   bot.version = bot._client.version
 
   bot.chatQueue = []
+  bot.cspy = false
+  bot.vanish = false
 
   bot.write = (name, payload) => bot._client.write(name, payload)
   bot.chat = message => bot.chatQueue.push(message)
@@ -49,6 +51,29 @@ function createBot (options = {}) {
   bot._client.on('entity_status', handleEntityStatus)
 
   loadPlugins(bot)
+
+  bot.on('parsed_chat', data => {
+    const filters = {
+      '^Successfully disabled CommandSpy$': data => {
+        bot.cspy = false
+      },
+      '^Successfully enabled CommandSpy$': data => {
+        bot.cspy = true
+      },
+      '^Vanish for .*: disabled$': data => {
+        bot.vanish = false
+      },
+      '^You are now completely invisible to normal users, and hidden from in-game commands.$': data => {
+        bot.vanish = true
+      }
+    }
+  
+    for (const filter in filters) {
+      const regex = new RegExp(filter, 'gi')
+  
+      if (regex.test(data.clean)) filters[filter](data)
+    }
+  }
 
   return bot
 
