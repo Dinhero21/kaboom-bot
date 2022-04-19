@@ -1,33 +1,12 @@
 const config = require('./config.json')
-const log4js = require('log4js')
-const _ = require('lodash')
+const path = require('path')
 const { createInterface } = require('readline')
 const { createBot } = require('./bot.js')
+const { Logger } = require('./logger.js')
 
 require('dotenv').config()
 
 const servers = process.env.SERVERS.split(',')
-
-log4js.configure({
-  appenders: _.zipObject(servers, servers.map(server => {
-    return {
-      type: 'file',
-      filename: `logs/${server.split(':')[0]}.log`
-    }
-  })),
-  categories: {
-    ..._.zipObject(servers, servers.map(server => {
-      return {
-        appenders: [server],
-        level: 'all'
-      }
-    })),
-    default: {
-      appenders: servers,
-      level: 'all'
-    }
-  }
-})
 
 const cli = createInterface({
   input: process.stdin,
@@ -48,8 +27,9 @@ setInterval(() => {
   cli._refreshLine()
 }, 1000)
 
-process.env.SERVERS.split(',').forEach(server => {
-  const logger = log4js.getLogger(server)
+servers.forEach(server => {
+  const logPath = path.join('logs', `${server}.json`)
+  const logger = new Logger(logPath)
   let [host, port] = server.split(':')
 
   port = port ?? 25565
@@ -64,10 +44,6 @@ process.env.SERVERS.split(',').forEach(server => {
     })
 
     bot.logger = logger
-
-    // TODO: Make these libs
-    bot.cspy = false
-    bot.vanish = false
 
     bot.on('login', () => {
       logger.info('Logged in!')
@@ -97,6 +73,12 @@ process.env.SERVERS.split(',').forEach(server => {
           const args = line.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
           const message = args.slice(1).join(' ')
 
+          if (!bot.util) {
+            console.error('Util was not found.')
+
+            return
+          }
+
           switch (args[0]) {
             case 'exit':
               bot.end()
@@ -124,6 +106,12 @@ process.env.SERVERS.split(',').forEach(server => {
 
         if (bot.sudo) {
           bot.core.run(`sudo ${bot.sudousername} c:${line}`)
+
+          return
+        }
+
+        if (!bot.util) {
+          console.error('Util was not found.')
 
           return
         }
@@ -158,33 +146,14 @@ process.env.SERVERS.split(',').forEach(server => {
     })
 
     bot.on('parsed_chat', data => {
-      const filters = {
-        '^Successfully disabled CommandSpy$': data => {
-          bot.cspy = false
-        },
-        '^Successfully enabled CommandSpy$': data => {
-          bot.cspy = true
-        },
-        '^Vanish for .*: disabled$': data => {
-          bot.vanish = false
-        },
-        '^You are now completely invisible to normal users, and hidden from in-game commands.$': data => {
-          bot.vanish = true
-        }
-      }
-
-      for (const filter in filters) {
-        const regex = new RegExp(filter, 'gi')
-
-        if (regex.test(data.clean)) filters[filter](data)
-      }
-
       log(`${data.ansi}${String.fromCharCode(27)}[0m`)
 
-      logger.info(data.raw)
+      logger.data('parsed_chat', data.raw)
     })
 
     bot.on('message', (username, message) => {
+      logger.data('chat', { username, message })
+
       if (username === bot.username) return
 
       message = message.replaceAll(/§./g, '')
@@ -200,16 +169,20 @@ process.env.SERVERS.split(',').forEach(server => {
       }
     })
 
+    bot.on('cspy', (username, command) => {
+      logger.data('cspy', { username, command })
+    })
+
     bot.on('kick_disconnect', reason => {
       log(`Kicked: ${reason}`)
 
-      logger.error(`Kicked: ${reason}`)
+      logger.data('kicked', reason)
     })
 
     bot.on('end', reason => {
       log(`Disconnected: ${reason}`)
 
-      logger.error(`Disconnected: ${reason}`)
+      logger.data('disconnected', reason)
 
       setTimeout(handleBot, process.env.RECONNECT_INTERVAL)
     })
