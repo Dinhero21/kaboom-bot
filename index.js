@@ -67,8 +67,8 @@ servers.forEach(server => {
           return
         }
 
-        if (line.startsWith('.')) {
-          line = line.substring('.'.length)
+        if (line.startsWith(config.prefix.terminal)) {
+          line = line.substring(config.prefix.terminal.length)
 
           const args = line.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
           const message = args.slice(1).join(' ')
@@ -158,8 +158,8 @@ servers.forEach(server => {
 
       message = message.replaceAll(/§./g, '')
 
-      if (message.startsWith(config.prefix)) {
-        message = message.substring(config.prefix.length)
+      if (message.startsWith(config.prefix.chat)) {
+        message = message.substring(config.prefix.chat.length)
 
         const args = message.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
 
@@ -176,13 +176,13 @@ servers.forEach(server => {
     bot.on('kick_disconnect', reason => {
       log(`Kicked: ${reason}`)
 
-      logger.data('kicked', reason)
+      logger.data(['kicked', 'end'], reason)
     })
 
     bot.on('end', reason => {
       log(`Disconnected: ${reason}`)
 
-      logger.data('disconnected', reason)
+      logger.data(['disconnected', 'end'], reason)
 
       setTimeout(handleBot, process.env.RECONNECT_INTERVAL)
     })
@@ -209,15 +209,11 @@ servers.forEach(server => {
       }
     }, 1000 * 5)
 
-    /*
     process.on('uncaughtException', error => {
-      log(error)
+      log(error.stack)
 
-      bot.util.error(`Fatal Error: ${error}`, '@a')
-
-      logger.fatal(error)
+      logger.data('fatal_error', error.stack)
     })
-    */
 
     function log (message) {
       console.log(`[${bot.host}] ${message}`)

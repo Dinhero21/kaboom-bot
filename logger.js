@@ -11,9 +11,9 @@ class Logger {
     fs.writeFileSync(this.path, JSON.stringify(this.value))
   }
 
-  data (type = 'default', content = null) {
+  data (type = [], content = null) {
     this.write({
-      type: type,
+      type: Array.isArray(type) ? type : [type],
       data: content,
       time: Date.now()
     })
