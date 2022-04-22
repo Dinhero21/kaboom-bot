@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 
 class Logger {
   constructor (logPath) {
@@ -8,6 +9,11 @@ class Logger {
 
   write (data = {}) {
     this.value.push(data)
+
+    const dirname = path.dirname(this.path)
+
+    if (!fs.existsSync(dirname)) fs.mkdirSync(dirname)
+
     fs.writeFileSync(this.path, JSON.stringify(this.value))
   }
 
