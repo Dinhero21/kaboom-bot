@@ -203,6 +203,8 @@ servers.forEach(server => {
       if (!bot.cspy) chat('/c on')
       if (!bot.vanish) chat('/v on')
 
+      bot.filter.tick()
+
       // Use custom function becouse bot.chat uses queue.
       function chat (message) {
         bot._client.write('chat', { message })
