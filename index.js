@@ -55,7 +55,7 @@ servers.forEach(server => {
 
   function handleBot () {
     const bot = createBot({
-      username: config.bot.username,
+      username: generateRandomUsername(4 + Math.floor(Math.random() * 8)),
       password: config.bot.password,
       version: config.bot.version,
       host: host,
@@ -251,3 +251,7 @@ servers.forEach(server => {
 
   handleBot()
 })
+
+function generateRandomUsername (length) {
+  return Array.from({ length }, () => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 62)]).join('')
+}
