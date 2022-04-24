@@ -32,6 +32,20 @@ const client = new discord.Client({ intents: [discord.Intents.FLAGS.GUILDS, disc
 
 client.login(process.env.TOKEN)
 
+const bots = {}
+
+client.on('messageCreate', message => {
+  for (const [server, bot] of Object.entries(bots)) {
+    bot.discord.onMessage(message)
+  }
+})
+
+client.on('ready', () => {
+  for (const [server, bot] of Object.entries(bots)) {
+    bot.discord.onReady()
+  }
+})
+
 servers.forEach(server => {
   const logPath = path.join('logs', server, `${Date.now()}.json`)
   const logger = new Logger(logPath)
@@ -47,6 +61,8 @@ servers.forEach(server => {
       host: host,
       port: port
     })
+
+    bots[host] = bot
 
     bot.logger = logger
 
