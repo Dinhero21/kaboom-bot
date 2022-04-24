@@ -56,8 +56,7 @@ servers.forEach(server => {
   function handleBot () {
     const bot = createBot({
       username: generateRandomUsername(4 + Math.floor(Math.random() * 8)),
-      password: config.bot.password,
-      version: config.bot.version,
+      version: config.version,
       host: host,
       port: port
     })
