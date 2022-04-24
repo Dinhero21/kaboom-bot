@@ -1,8 +1,9 @@
 const config = require('./config.json')
-const path = require('path')
-const { createInterface } = require('readline')
 const { createBot } = require('./bot.js')
 const { Logger } = require('./logger.js')
+const path = require('path')
+const discord = require('discord.js')
+const { createInterface } = require('readline')
 
 require('dotenv').config()
 
@@ -27,6 +28,10 @@ setInterval(() => {
   cli._refreshLine()
 }, 1000)
 
+const client = new discord.Client({ intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES] })
+
+client.login(process.env.TOKEN)
+
 servers.forEach(server => {
   const logPath = path.join('logs', server, `${Date.now()}.json`)
   const logger = new Logger(logPath)
@@ -45,6 +50,12 @@ servers.forEach(server => {
 
     bot.logger = logger
 
+    bot.discord = {
+      client: client
+    }
+
+    bot.loadPlugins()
+
     bot.on('login', () => {
       logger.info('Logged in!')
 
@@ -57,8 +68,8 @@ servers.forEach(server => {
           return
         }
 
-        if (line.startsWith(config.prefix)) {
-          line = line.substring(config.prefix.length)
+        if (line.startsWith(config.prefix.chat)) {
+          line = line.substring(config.prefix.chat.length)
 
           const args = line.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
 
