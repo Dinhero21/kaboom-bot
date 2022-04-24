@@ -37,9 +37,6 @@ class DiscordCommandHandler extends CommandHandler {
   }
 
   send (message) {
-    console.log('Sending Message:')
-    console.log(message)
-
     this.channel.send(message)
   }
 }
