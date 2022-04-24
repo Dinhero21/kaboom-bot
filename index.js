@@ -32,16 +32,16 @@ const client = new discord.Client({ intents: [discord.Intents.FLAGS.GUILDS, disc
 
 client.login(process.env.TOKEN)
 
-const bots = []
+const bots = {}
 
 client.on('messageCreate', message => {
-  for (const bot of bots) {
+  for (const bot of Object.values(bots)) {
     bot.discord.onMessage(message)
   }
 })
 
 client.on('ready', () => {
-  for (const bot of bots) {
+  for (const bot of Object.values(bots)) {
     bot.discord.onReady()
   }
 })
@@ -61,7 +61,7 @@ servers.forEach(server => {
       port: port
     })
 
-    bots.push(bot)
+    bots[server] = bot
 
     bot.logger = logger
 
