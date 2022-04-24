@@ -220,7 +220,7 @@ servers.forEach(server => {
       logger.error(error)
     })
 
-    // TODO: Switch to another thing becouse setInterval can create memory leaks.
+    // TODO: Switch to another thing because setInterval can create memory leaks.
     setInterval(() => {
       if (!bot.op) {
         chat('/op @p')
@@ -232,7 +232,7 @@ servers.forEach(server => {
 
       bot.filter.tick()
 
-      // Use custom function becouse bot.chat uses queue.
+      // Use custom function because bot.chat uses queue.
       function chat (message) {
         bot._client.write('chat', { message })
       }
