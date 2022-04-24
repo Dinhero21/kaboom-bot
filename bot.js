@@ -31,6 +31,9 @@ function createBot (options = {}) {
   bot.write = (name, payload) => bot._client.write(name, payload)
   bot.chat = message => bot.chatQueue.push(message)
   bot.end = bot._client.end
+  bot.loadPlugins = () => {
+    loadPlugins(bot)
+  }
 
   bot.removeAllListeners()
 
@@ -50,8 +53,6 @@ function createBot (options = {}) {
   bot._client.on('chat', handleChat)
   bot._client.on('entity_status', handleEntityStatus)
 
-  loadPlugins(bot)
-
   bot.on('parsed_chat', data => {
     const filters = {
       '^Successfully disabled CommandSpy$': data => {
@@ -67,13 +68,13 @@ function createBot (options = {}) {
         bot.vanish = true
       }
     }
-  
+
     for (const filter in filters) {
       const regex = new RegExp(filter, 'gi')
-  
+
       if (regex.test(data.clean)) filters[filter](data)
     }
-  }
+  })
 
   return bot
 
