@@ -11,8 +11,6 @@ function createBot (options = {}) {
   options.port = options.port ?? 25565
   options.version = options.version ?? '1.18.1'
 
-  options.username = generateRandomUsername(options.username, 3)
-
   const bot = new EventEmitter()
 
   bot._client = minecraft.createClient(options)
@@ -137,9 +135,6 @@ function createBot (options = {}) {
   }
   function tick () {
     bot.emit('tick')
-  }
-  function generateRandomUsername (username, size) {
-    return `${username}${Array(size).fill(0).map(() => 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]).join('')}`
   }
 }
 function loadPlugins (bot) {
