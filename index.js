@@ -241,11 +241,25 @@ servers.forEach(server => {
       console.log(`[${bot.host}] ${message}`)
     }
 
-    setInterval(advertise, 1000 * .1)
+    setInterval(advertise, 1000 * 60)
 
     function advertise () {
-      bot.util.tellraw('Join Dinutil\'s Discord at https://discord.gg/PRJxNGKSHe')
-      bot.util.tellraw('Say <help for command list!')
+      if (!bot.util) return
+
+      bot.util.tellraw({
+        text: 'Join Dinutil\'s Discord at https://discord.gg/PRJxNGKSHe',
+        clickEvent: {
+          action: 'open_url',
+          value: 'https://discord.gg/PRJxNGKSHe'
+        }
+      })
+      bot.util.tellraw({
+        text: 'Type <help or click here for command list!',
+        clickEvent: {
+          action: 'run_command',
+          value: '<help'
+        }
+      })
     }
   }
 
