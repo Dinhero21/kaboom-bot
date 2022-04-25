@@ -47,7 +47,7 @@ client.on('ready', () => {
 })
 
 servers.forEach(server => {
-  const logPath = path.join('logs', server, `${Date.now()}.json`)
+  const logPath = path.join('logs', server)
   const logger = new Logger(logPath)
   let [host, port] = server.split(':')
 
