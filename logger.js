@@ -43,7 +43,7 @@ class Logger {
 
     fs.writeFileSync(this.path, JSON.stringify(this.value))
 
-    if (data.length > config.max_log_size) {
+    if (this.value.length > config.max_log_size) {
       this.value = []
       this.path = path.join(dirname, `${Date.now()}.json`)
     }
