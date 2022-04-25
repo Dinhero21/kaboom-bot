@@ -40,12 +40,6 @@ client.on('messageCreate', message => {
   }
 })
 
-client.on('ready', () => {
-  for (const bot of Object.values(bots)) {
-    bot.discord.onReady()
-  }
-})
-
 servers.forEach(server => {
   const logPath = path.join('logs', server)
   const logger = new Logger(logPath)
