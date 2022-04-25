@@ -14,15 +14,17 @@ class Logger {
     for (const filename of fs.readdirSync(logPath)) {
       if (!/^\d+\.json$/.test(filename)) continue
 
+      const filepath = path.join(logPath, filename)
+
       try {
-        const filepath = path.join(logPath, filename)
         const content = JSON.parse(fs.readFileSync(filepath, 'utf8'))
 
         data.push(...content)
-        fs.rmSync(filepath)
       } catch (error) {
         console.error(error)
       }
+
+      fs.rmSync(filepath)
     }
 
     const latestPath = path.join(logPath, 'latest.json')
