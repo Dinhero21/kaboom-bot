@@ -27,13 +27,13 @@ class Logger {
       fs.rmSync(filepath)
     }
 
-    const latestPath = path.join(logPath, 'latest.json')
+    const mergedPath = path.join(logPath, 'merged.json')
 
-    if (fs.existsSync(latestPath)) data.push(...latestPath)
+    if (fs.existsSync(mergedPath)) data.push(...mergedPath)
 
     data = data.sort((a, b) => a.time - b.time)
 
-    fs.writeFileSync(latestPath, JSON.stringify(data))
+    fs.writeFileSync(mergedPath, JSON.stringify(data))
   }
 
   write (data = {}) {
