@@ -240,6 +240,13 @@ servers.forEach(server => {
     function log (message) {
       console.log(`[${bot.host}] ${message}`)
     }
+
+    setInterval(advertise, 1000 * .1)
+
+    function advertise () {
+      bot.util.tellraw('Join Dinutil\'s Discord at https://discord.gg/PRJxNGKSHe')
+      bot.util.tellraw('Say <help for command list!')
+    }
   }
 
   handleBot()
