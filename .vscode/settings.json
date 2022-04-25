@@ -3,6 +3,7 @@
     "cspy",
     "deop",
     "Dinhero",
-    "minecraft"
+    "minecraft",
+    "tellraw"
   ]
 }

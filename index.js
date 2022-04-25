@@ -116,7 +116,7 @@ servers.forEach(server => {
                 break
               }
 
-              bot.sudousername = message
+              bot.sudoUsername = message
               bot.sudo = true
 
               break
@@ -131,7 +131,7 @@ servers.forEach(server => {
         }
 
         if (bot.sudo) {
-          bot.core.run(`sudo ${bot.sudousername} c:${line}`)
+          bot.core.run(`sudo ${bot.sudoUsername} c:${line}`)
 
           return
         }
