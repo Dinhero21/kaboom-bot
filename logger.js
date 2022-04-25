@@ -18,10 +18,7 @@ class Logger {
         const filepath = path.join(logPath, filename)
         const content = JSON.parse(fs.readFileSync(filepath, 'utf8'))
 
-        console.log(content)
-
         data.push(...content)
-
         fs.rmSync(filepath)
       } catch (error) {
         console.error(error)
