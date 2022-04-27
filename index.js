@@ -261,7 +261,7 @@ servers.forEach(server => {
           }
         },
         {
-          text: 'or type ',
+          text: ' or type ',
           color: 'white'
         },
         {
