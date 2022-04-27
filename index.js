@@ -253,10 +253,23 @@ servers.forEach(server => {
         },
         {
           text: 'here',
-          color: 'light_purple',
+          color: 'aqua',
+          underlined: true,
           clickEvent: {
             action: 'open_url',
             value: 'https://discord.gg/PRJxNGKSHe'
+          }
+        },
+        {
+          text: 'or type ',
+          color: 'white'
+        },
+        {
+          text: `${config.prefix.chat}discord`,
+          color: 'red',
+          clickEvent: {
+            action: 'run_command',
+            value: `${config.prefix.chat}discord`
           }
         },
         {
@@ -278,16 +291,16 @@ servers.forEach(server => {
       ])
       bot.util.tellraw([
         {
-          text: 'Click ',
+          text: 'Type ',
           color: 'white'
         },
         {
-          text: 'here',
+          text: `${config.prefix.chat}help`,
           underlined: true,
           color: 'aqua',
           clickEvent: {
             action: 'run_command',
-            value: '<help'
+            value: `${config.prefix.chat}help`
           }
         },
         {
