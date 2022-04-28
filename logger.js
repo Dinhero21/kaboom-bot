@@ -29,7 +29,15 @@ class Logger {
 
     const mergedPath = path.join(logPath, 'merged.json')
 
-    if (fs.existsSync(mergedPath)) data.push(...mergedPath)
+    if (fs.existsSync(mergedPath)) {
+      try {
+        const content = JSON.parse(fs.readFileSync(mergedPath, 'utf8'))
+
+        data.push(...content)
+      } catch (error) {
+        console.error(error)
+      }
+    }
 
     data = data.sort((a, b) => a.time - b.time)
 
