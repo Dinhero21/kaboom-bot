@@ -65,6 +65,8 @@ servers.forEach(server => {
 
     bot.loadPlugins()
 
+    bot.on('tick', bot.cloop.tick)
+
     bot.on('login', () => {
       logger.info('Logged in!')
 
