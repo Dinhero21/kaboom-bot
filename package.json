@@ -29,7 +29,7 @@
     "log4js": "^6.4.3",
     "markov": "^0.0.7",
     "mathjs": "^10.1.1",
-    "minecraft-data": "^2.113.3",
+    "minecraft-data": "^2.221.0",
     "minecraft-protocol": "^1.30.0",
     "nearest-color": "^0.4.4",
     "node-fetch": "^3.2.0",
