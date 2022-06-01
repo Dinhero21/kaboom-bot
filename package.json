@@ -32,7 +32,7 @@
     "minecraft-data": "^2.113.3",
     "minecraft-protocol": "^1.30.0",
     "nearest-color": "^0.4.4",
-    "node-fetch": "^3.2.0",
+    "node-fetch": "^3.2.4",
     "prismarine-nbt": "^2.2.0",
     "sharp": "^0.30.4",
     "standard": "^16.0.4",
