@@ -28,7 +28,7 @@
     "lodash": "^4.17.21",
     "log4js": "^6.4.3",
     "markov": "^0.0.7",
-    "mathjs": "^10.1.1",
+    "mathjs": "^10.5.2",
     "minecraft-data": "^2.113.3",
     "minecraft-protocol": "^1.30.0",
     "nearest-color": "^0.4.4",
