@@ -30,7 +30,7 @@
     "markov": "^0.0.7",
     "mathjs": "^10.1.1",
     "minecraft-data": "^2.113.3",
-    "minecraft-protocol": "^1.30.0",
+    "minecraft-protocol": "^1.34.0",
     "nearest-color": "^0.4.4",
     "node-fetch": "^3.2.0",
     "prismarine-nbt": "^2.2.0",
